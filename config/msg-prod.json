@@ -1,0 +1,40 @@
+{
+  "name"       : "zn MSG Server",
+  "id"         : "zn-msg",
+  "mode"       : "production",
+  "context"    : "/zn/msg",
+
+  "logger":
+  {
+    "level"    : "DEBUG",
+    "colors"   : true
+  },
+
+  "listener":
+  {
+    "port"     : 7117,
+    "address"  : "0.0.0.0"
+  },
+
+  "tls":
+  {
+    "enabled"     : "false",
+    "key"         : "${env.APP_HOME}/config/server.key",
+    "certificate" : "${env.APP_HOME}/config/server.cert"
+  },
+
+  "connector":
+  {
+  },
+
+  "origins": "${env.ORIGINS}",
+
+  "auth":
+  {
+    "enabled": true,
+    "type": "oracle",
+    "signingCert": "MIIDYTCCAkmgAwIBAgIGAWTRy6WvMA0GCSqGSIb3DQEBCwUAMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZvcmFjbGUxFTATBgoJkiaJk/IsZAEZFgVjbG91ZDETMBEGA1UEAxMKQ2xvdWQ5Q0EtMjAeFw0xODA3MjUxNDE1NDFaFw0yODA3MjUxNDE1NDFaMFYxEzARBgNVBAMTCnNzbERvbWFpbnMxDzANBgNVBAMTBkNsb3VkOTEuMCwGA1UEAxMlaWRjcy0xZGZkZGIyNzkyNjQ0ZTVkYWRmMzYwYzNiYzM4MTUxMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJo8FBiF0P0QchR6LWw1GMok4r7AhkrsNsdeiUrHayqQCVDfbF789QbbHGx4glK4fiGVzWRrhwyh6E/7yI4h4IYVeekSu+bpCAJd5HRuJUURBc+y7C7s+PtOHzprD9m+/+IX/4K2Fum2HVoeFcglGpz0S5KSfGNrXYQpo4v7jZQEDkx0c3H9Xw/7ELd9sv+5le5MGC+THXEWs+vmh9Oir+c/E/MbRFgwsiniwNWUQ5v/0XkPH2T9CC3Pi7LaFbvgQdAoxRDfjS1fAM8VLYfMcNfCYj/4i7eK/UCm8RSWWFXYmfUDTS7leuFeBfVG/SWdXyoYgXQCLuGWBlj8lLwIPjsCAwEAAaMyMDAwDwYDVR0PAQH/BAUDAwf4ADAdBgNVHQ4EFgQUudJrJBXoa/ePfjq7le86wWGyiq4wDQYJKoZIhvcNAQELBQADggEBALpaZogRKJpnWfbKCo0k0J9pOq0mCNf7MQqirpJB139XgxqhBT3hYPcMTg8c9vsKYKhsfDHvrhN/S2FXlGZPND7tXYiUj10pUrodzRtZQAHKoLB38wz6NNhSNgY0HmtCWZAKDoluoTMoQ4YVSICDXT9I2K0Gw+TSUT/jiHMjaeKfbai2potfCjTZcTrZidk1F4lbR4f30/6ZAP/ldVF55tficz0+1a944pU1kh9XwfkmCxgtWPPLhgfHJi0glQwJMBU9LOhf7tTrRjQbhR/UzGqLubNd1r62F8ud5CcwZFVOipdHLmCuxQ9VncfoaESjThE6MpMF9mmPdNgAaLKXMx4=",
+    "signingAlgo": "RS256",
+    "issuer": "https://identity.oraclecloud.com/"
+  }  
+}
