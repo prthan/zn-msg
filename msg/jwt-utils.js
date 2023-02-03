@@ -1,14 +1,17 @@
 const crypto=require("crypto");
 
+const logger=require("./logger");
+const common=require("./common");
+
 let utils={};
 
-utils.createToken=(header, payload, privateKeySpec)=>
+utils.createJWT=(sub, iss, aud, kid, privateKeySpec)=>
 {
   let now=Math.floor(Date.now() / 1000);
   let exp=3600;
 
-  payload["iat"]=now;
-  payload["exp"]=now+3600;
+  let header={"alg": "RS256", "typ": "JWT", "kid": kid};
+  let payload={sub, iss, aud: [aud], iat: now, exp: now+exp};
 
   let encodedHeader=Buffer.from(JSON.stringify(header)).toString("base64url");
   let encodedPayload=Buffer.from(JSON.stringify(payload)).toString("base64url");
@@ -18,6 +21,50 @@ utils.createToken=(header, payload, privateKeySpec)=>
   let signature=crypto.sign("RSA-SHA256", Buffer.from(data), privateKey);
 
   return data + "." + signature.toString("base64url");
+}
+
+utils.getToken=(auth)=>
+{
+  logger.debug("getting token ...");
+  let impl=async(res$, rej$)=>
+  {
+    let request={};
+    if(!auth.clientAssertionType)
+    {
+      request=
+      {
+        method: "POST",
+        headers:
+        {
+          "authorization": `Basic ${Buffer.from(`${auth.clientId}:${auth.clientSecret}`).toString("base64")}`,
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        url: `${auth.tokenUrl}`,
+        data: `grant_type=${auth.grantType}&scope=${auth.scope}`
+      }
+    }
+    else
+    {
+      let assertion=utils.createJWT(auth.clientId, auth.clientId, auth.aud, auth.kid, auth.privateKey);
+      request=
+      {
+        method: "POST",
+        headers:{"content-type": "application/x-www-form-urlencoded"},
+        url: `${auth.tokenUrl}`,
+        data: `grant_type=${auth.grantType}&scope=${auth.scope}&client_id=${auth.clientId}&client_assertion_type=${auth.clientAssertionType}&client_assertion=${assertion}`
+      }
+    }
+    console.log(request);
+    let outcome=await common.httpRequest(request);
+    if(outcome.error)
+    {
+      logger.error("error occured while getting the token", outcome.error);
+      return rej$(outcome.error);
+    }
+    res$(outcome.data.access_token);
+  }
+
+  return new Promise(impl);
 }
 
 utils.decodeToken=(token)=>
